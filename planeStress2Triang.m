@@ -23,9 +23,9 @@ Q = zeros(dim*numNodes,1);
 F = zeros(dim*numNodes,1);
 B = cell(numElem,1);
 
-model = 1; %model = 1: stress; model = 2; strain
-
 C = zeros(3,3);
+
+%Coefficients for stress problems  
 C(1,1)= E/(1-nu^2);
 C(1,2)= nu*C(1,1);
 C(2,1)= C(1,2);
@@ -51,17 +51,20 @@ freeNods = setdiff(1:dim*numNodes,fixedNods);
 
 %Boundary Conditions;
 %Natural B.C.: 
-%Oon side 2 of element 1 (local nodes 2 and 3)
+%On side 2 of element 1 (local nodes 2 and 3)
 h = norm(nodes(elem(1,2),:)-nodes(elem(1,3),:));
 nod=2; %global node (node 2 of element 1)
-Q(2*nod-1) = th*h*tau0/2;
-Q(2*nod) = 0.0;
+%Q(2*nod-1) = th*h*tau0/2;
+Q(2*nod-1) = h*tau0/2;       % Q2x = h*tau0/2 
+Q(2*nod) = 0.0;              % Q2y = 0;
 nod=3; %global node (node 3 of element 1)
-Q(2*nod-1) = th*h*tau0/2;
-nod=3; %global node (node 3 of element 1)
-Q(2*nod-1) = th*h*tau0/2;
-Q(2*nod) = 0.0;
-
+%Q(2*nod-1) = th*h*tau0/2;
+Q(2*nod-1) = h*tau0/2;       % Qx3 = h*tau0/2
+Q(2*nod) = 0.0;              % Qy3 = 0;
+                % Note: it seems (??) that the thicknes is already included
+                % in tau0. Note that the given units for t0 are N/mm, not
+                % N/mm^2.
+                
 %Essential B.C.
 u = zeros(dim*numNodes,1);
 u(fixedNods,1) = 0;
@@ -74,8 +77,15 @@ Qm = Q(freeNods) - K(freeNods,fixedNods)*u(fixedNods,1);
 um = Km\Qm;
 u(freeNods,1)= um;
 
-fprintf('Displacements:\n')
-fprintf('%2d%14.5e%12.5e\n',[(1:numNodes)',u(1:2:end),u(2:2:end)]')
+%Plot the x-displacements
+ux = u(1:2:end);
+colorScale = 'jet';
+title = 'x-displacements';
+plotContourSolution(nodes,elem,ux,title,colorScale);
+
+fprintf('\n%30s\n','Displacements (in mm)')
+fprintf('%5s%8s%14s\n','NOD.','U', 'V')
+fprintf('%2d%16.5e%14.5e\n',[(1:numNodes)',u(1:2:end),u(2:2:end)]')
 
 sigma = zeros(3,numElem);
 
@@ -85,12 +95,6 @@ for e = 1:numElem
     sigma(:,e) = C*B{e}*u(rows);
 end
 
-fprintf('Stress:\n');
-fprintf('%2d%15.5e%15.5e%15.5e\n',[(1:numElem)',sigma']')
-
-
-
-
-
-
-
+fprintf('\n%28s\n','Stress (in N/mm^2)');
+fprintf('%5s%8s%14s%14s\n','ELEM.','SX','SY','SXY')
+fprintf('%2d%15.5e%14.5e%14.5e\n',[(1:numElem)',sigma']')
