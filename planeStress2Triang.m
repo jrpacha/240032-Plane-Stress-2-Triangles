@@ -55,15 +55,12 @@ freeNods = setdiff(1:dim*numNodes,fixedNods);
 h = norm(nodes(elem(1,2),:)-nodes(elem(1,3),:));
 nod=2; %global node (node 2 of element 1)
 %Q(2*nod-1) = th*h*tau0/2;
-Q(2*nod-1) = h*tau0/2;       % Q2x = h*tau0/2 
+Q(2*nod-1) = th*h*tau0/2;    % Q2x = h*tau0/2 
 Q(2*nod) = 0.0;              % Q2y = 0;
 nod=3; %global node (node 3 of element 1)
 %Q(2*nod-1) = th*h*tau0/2;
-Q(2*nod-1) = h*tau0/2;       % Qx3 = h*tau0/2
+Q(2*nod-1) = th*h*tau0/2;    % Qx3 = h*tau0/2
 Q(2*nod) = 0.0;              % Qy3 = 0;
-                % Note: it seems (??) that the thicknes is already included
-                % in tau0. Note that the given units for t0 are N/mm, not
-                % N/mm^2.
                 
 %Essential B.C.
 u = zeros(dim*numNodes,1);
