@@ -1,4 +1,4 @@
-    clearvars
+clearvars
 close all
 
 th =0.036;     %mm
@@ -17,6 +17,9 @@ elem = [1,2,3;
 numNodes = size(nodes,1);
 numElem = size(elem,1);
 dim = size(nodes,2);
+
+numbering = 1;
+plotElements(nodes, elem, numbering)
 
 K = zeros(dim*numNodes);
 Q = zeros(dim*numNodes,1);
@@ -39,7 +42,7 @@ for e=1:numElem
     cols = rows;
     K(rows,cols) = K(rows,cols) + Ke;
     B{e} = Be;
-end;
+end
 
 fixedNods = [];
 nod=1;
