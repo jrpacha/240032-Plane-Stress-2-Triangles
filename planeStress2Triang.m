@@ -37,7 +37,8 @@ C(3,3)= 0.5*E/(1+nu);
 
 for e=1:numElem
     [Ke,Be] = stiffMatrixElastTriang(nodes,elem,C,th,e);
-    rows = [dim*elem(e,1)-1, dim*elem(e,1), dim*elem(e,2)-1, dim*elem(e,2),...
+    rows = [dim*elem(e,1)-1, dim*elem(e,1), ...
+        dim*elem(e,2)-1, dim*elem(e,2), ...
         dim*elem(e,3)-1, dim*elem(e,3)];
     cols = rows;
     K(rows,cols) = K(rows,cols) + Ke;
