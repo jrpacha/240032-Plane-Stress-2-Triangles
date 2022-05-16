@@ -3,7 +3,7 @@ close all
 
 th =0.036;     %mm
 tau0 = 1000.0; %N/mm^2;
-E = 3.0e7;    %N/mm^2M
+E = 3.0e7;     %N/mm^2
 nu = 0.25;
 
 nodes = [0,0;
@@ -53,17 +53,19 @@ fixedNods = [fixedNods,dim*nod-1,dim*nod];
 freeNods = setdiff(1:dim*numNodes,fixedNods);
 
 %Boundary Conditions;
+
 %Natural B.C.: 
 %On side 2 of element 1 (local nodes 2 and 3)
 h = norm(nodes(elem(1,2),:)-nodes(elem(1,3),:));
+
 nod=2; %global node (node 2 of element 1)
-%Q(2*nod-1) = th*h*tau0/2;
 Q(2*nod-1) = th*h*tau0/2;    % Q2x = h*tau0/2 
 Q(2*nod) = 0.0;              % Q2y = 0;
+
 nod=3; %global node (node 3 of element 1)
 %Q(2*nod-1) = th*h*tau0/2;
-Q(2*nod-1) = th*h*tau0/2;    % Qx3 = h*tau0/2
-Q(2*nod) = 0.0;              % Qy3 = 0;
+Q(2*nod-1) = th*h*tau0/2;    % Q3x = h*tau0/2
+Q(2*nod) = 0.0;              % Q3y = 0;
                 
 %Essential B.C.
 u = zeros(dim*numNodes,1);
