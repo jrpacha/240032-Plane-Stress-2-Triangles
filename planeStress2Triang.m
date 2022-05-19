@@ -56,16 +56,21 @@ freeNods = setdiff(1:dim*numNodes,fixedNods);
 %Boundary Conditions;
 
 %Natural B.C.: 
+
+%Remark. As the traction, tau0, is given in N/mm 
+% (force units/length units, we compute the Q's
+% without multiplying by the thickness, th
+
 %On side 2 of element 1 (local nodes 2 and 3)
 h = norm(nodes(elem(1,2),:)-nodes(elem(1,3),:));
 
 nod=2; %global node (node 2 of element 1)
-Q(2*nod-1) = th*h*tau0/2;    % Q2x = h*tau0/2 
+Q(2*nod-1) = h*tau0/2;    % Q2x = h*tau0/2 
 Q(2*nod) = 0.0;              % Q2y = 0;
 
 nod=3; %global node (node 3 of element 1)
 %Q(2*nod-1) = th*h*tau0/2;
-Q(2*nod-1) = th*h*tau0/2;    % Q3x = h*tau0/2
+Q(2*nod-1) = h*tau0/2;    % Q3x = h*tau0/2
 Q(2*nod) = 0.0;              % Q3y = 0;
                 
 %Essential B.C.
@@ -86,6 +91,9 @@ colorScale = 'jet';
 title = 'x-displacements';
 plotContourSolution(nodes,elem,ux,title,colorScale);
 
+% =========================================================================
+% Fancy output: don't try this at the exams!
+% =========================================================================
 fprintf('\n%30s\n','Displacements (in mm)')
 fprintf('%5s%8s%14s\n','NOD.','U', 'V')
 fprintf('%2d%16.5e%14.5e\n',[(1:numNodes)',u(1:2:end),u(2:2:end)]')
@@ -98,6 +106,9 @@ for e = 1:numElem
     sigma(:,e) = C*B{e}*u(rows);
 end
 
+% =========================================================================
+% Fancy output: don't try this at the exams!
+% =========================================================================
 fprintf('\n%28s\n','Stress (in N/mm^2)');
 fprintf('%5s%8s%14s%14s\n','ELEM.','SX','SY','SXY')
 fprintf('%2d%15.5e%14.5e%14.5e\n',[(1:numElem)',sigma']')
