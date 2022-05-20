@@ -1,10 +1,8 @@
-## Plane Stress for 2 triangles
+## Example: Plane Stress for 2 triangles
 
 ### Files
 1. planeStrees2Tring.m
-1. stiffMatrixElastTriang.m. Warning: for the _full, official_ version see the practices.
-1. plotContourSolution.m (from prof. Toni Susin's Numerical Factory)
+1. stiffMatrixElastTriang.m. Warning: for the _full, official_ version see [practice 4.1](https://numfactory.upc.edu/numfactory/subjects/FEM/Elasticity/practices/P4.1/html/P4_1_PlaneElasticityTriang_en.html)
+   at professor Toni Susin's [Numerical Factory](https://numfactory.upc.edu). 
 
-Note: the mess with the thicknes has been fixed and now the components of Q
-are multiplied by the thicknes th, so the results in the handwritten
-solution coincide with the results given by the Matlab script.
+
