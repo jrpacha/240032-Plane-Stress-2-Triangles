@@ -106,9 +106,13 @@ for e = 1:numElem
     sigma(:,e) = C*B{e}*u(rows);
 end
 
+%Von Mises stress
+vonMises = sqrt(sigma(1,:).^2 + sigma(2,:).^2 ...
+    - sigma(1,:).*sigma(2,:)+ 3*sigma(3,:).^2);
+
 % =========================================================================
 % Fancy output: don't try this at the exams!
 % =========================================================================
 fprintf('\n%28s\n','Stress (in N/mm^2)');
-fprintf('%5s%8s%14s%14s\n','ELEM.','SX','SY','SXY')
-fprintf('%2d%15.5e%14.5e%14.5e\n',[(1:numElem)',sigma']')
+fprintf('%5s%8s%14s%14s%17s\n','ELEM.','SX','SY','SXY','Von Mises')
+fprintf('%2d%15.5e%14.5e%14.5e%14.5e\n',[(1:numElem)',sigma',vonMises']')
