@@ -98,7 +98,8 @@ fprintf('\n%30s\n','Displacements (in mm)')
 fprintf('%5s%8s%14s\n','NOD.','U', 'V')
 fprintf('%2d%16.5e%14.5e\n',[(1:numNodes)',u(1:2:end),u(2:2:end)]')
 
-sigma = zeros(3,numElem);
+%Stress for the elements
+sigma = zeros(3,numElem); 
 
 for e = 1:numElem
     rows = [dim*elem(e,1)-1, dim*elem(e,1), dim*elem(e,2)-1, dim*elem(e,2),...
@@ -106,9 +107,25 @@ for e = 1:numElem
     sigma(:,e) = C*B{e}*u(rows);
 end
 
-%Von Mises stress
+%Von Mises stress (
 vonMises = sqrt(sigma(1,:).^2 + sigma(2,:).^2 ...
     - sigma(1,:).*sigma(2,:)+ 3*sigma(3,:).^2);
+
+
+  %Stress and VM stress for the nodes (taken form the original
+%code in computeQuadStrainStressVM.m,available at professor 
+% Toni Susin's Numerical Factory)
+sigmaNod=zeros(3,numNodes);
+for e=1:numElem
+    sigmaNod(:,elem(e,:)) = sigmaNod(:,elem(e,:)) + sigma(:,e);
+end
+
+nodInElem=zeros(1,numNodes);
+for i=1:numNodes
+    elements=elemContainNod(i,elem);
+    nodInElem(i)=size(elements,2); %how many elements the node ith belongs
+end
+sigmaNod=sigmaNod./nodInElem
 
 % =========================================================================
 % Fancy output: don't try this at the exams!
