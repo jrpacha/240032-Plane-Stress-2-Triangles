@@ -2,7 +2,7 @@ clearvars
 close all
 
 th =0.036;     %mm
-tau0 = 1000.0; %N/mm^2;
+tau0 = 1000.0; %N/mm;
 E = 3.0e7;     %N/mm^2
 nu = 0.25;
 
