@@ -36,5 +36,4 @@ vonMises = sqrt(sigma(1,:).^2 + sigma(2,:).^2 ...
 
 [sigma', vonMises']
 
-
   
