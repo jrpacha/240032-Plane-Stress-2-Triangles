@@ -1,4 +1,4 @@
-function [Ke,Be] = stiffMatrixElastTriang(nodes,elem,C,th,e)
+function [Ke,Be] = planeElasrTriangStiffMatrixJR(nodes,elem,C,th,e)
 %
 % Remark: for the "official" version, see Practice 4.1 at 
 %         professor Toni Susin's Numerical Factory,

@@ -19,7 +19,7 @@ numElem = size(elem,1);
 dim = size(nodes,2);
 
 numbering = 1;
-plotElements(nodes, elem, numbering)
+plotElementsOld(nodes, elem, numbering)
 
 K = zeros(dim*numNodes);
 Q = zeros(dim*numNodes,1);
@@ -36,7 +36,7 @@ C(2,2)= C(1,1);
 C(3,3)= 0.5*E/(1+nu);
 
 for e=1:numElem
-    [Ke,Be] = stiffMatrixElastTriang(nodes,elem,C,th,e);
+    [Ke,Be] = planeElasrTriangStiffMatrixJR(nodes,elem,C,th,e);
     rows = [dim*elem(e,1)-1, dim*elem(e,1), ...
         dim*elem(e,2)-1, dim*elem(e,2), ...
         dim*elem(e,3)-1, dim*elem(e,3)];
@@ -71,7 +71,7 @@ Q(2*nod) = 0.0;              % Q2y = 0;
 nod=3; %global node (node 3 of element 1)
 %Q(2*nod-1) = th*h*tau0/2;
 Q(2*nod-1) = h*tau0/2;    % Q3x = h*tau0/2
-Q(2*nod) = 0.0;              % Q3y = 0;
+Q(2*nod) = 0.0;           % Q3y = 0;
                 
 %Essential B.C.
 u = zeros(dim*numNodes,1);
@@ -98,6 +98,12 @@ fprintf('\n%30s\n','Displacements (in mm)')
 fprintf('%5s%8s%14s\n','NOD.','U', 'V')
 fprintf('%2d%16.5e%14.5e\n',[(1:numNodes)',u(1:2:end),u(2:2:end)]')
 
+
+%Post process
+%Plot the displacements
+scale=1.0e2;
+plotPlaneNodElemDespl(nodes, elem, u, scale);
+
 %Stress for the elements
 sigma = zeros(3,numElem); 
 
@@ -107,25 +113,9 @@ for e = 1:numElem
     sigma(:,e) = C*B{e}*u(rows);
 end
 
-%Von Mises stress (
+%Von Mises stress 
 vonMises = sqrt(sigma(1,:).^2 + sigma(2,:).^2 ...
     - sigma(1,:).*sigma(2,:)+ 3*sigma(3,:).^2);
-
-
-  %Stress and VM stress for the nodes (taken form the original
-%code in computeQuadStrainStressVM.m,available at professor 
-% Toni Susin's Numerical Factory)
-sigmaNod=zeros(3,numNodes);
-for e=1:numElem
-    sigmaNod(:,elem(e,:)) = sigmaNod(:,elem(e,:)) + sigma(:,e);
-end
-
-nodInElem=zeros(1,numNodes);
-for i=1:numNodes
-    elements=elemContainNod(i,elem);
-    nodInElem(i)=size(elements,2); %how many elements the node ith belongs
-end
-sigmaNod=sigmaNod./nodInElem
 
 % =========================================================================
 % Fancy output: don't try this at the exams!
@@ -133,3 +123,27 @@ sigmaNod=sigmaNod./nodInElem
 fprintf('\n%28s\n','Stress (in N/mm^2)');
 fprintf('%5s%8s%14s%14s%17s\n','ELEM.','SX','SY','SXY','Von Mises')
 fprintf('%2d%15.5e%14.5e%14.5e%14.5e\n',[(1:numElem)',sigma',vonMises']')
+
+%Stress and VM stress for the nodes (taken form the original
+%code in computeQuadStrainStressVM.m,available at professor 
+%Toni Susin's Numerical Factory)
+sigma = sigma';
+sigmaNod=zeros(4, numNodes);
+for e=1:numElem
+    sigmaNod(:,elem(e,:)) = sigmaNod(:, elem(e,:)) + [sigma(e,:)'; vonMises(e)];
+end
+
+nodInElem=zeros(1,numNodes);
+for i=1:numNodes
+    elements=elemContainNod(i,elem);
+    nodInElem(i)=size(elements,2); %how many elements the node ith belongs
+end
+sigmaNod=sigmaNod./nodInElem;
+
+% Table with the stress tensor components at each point
+sigmaNod=sigmaNod';
+stressTable=table((1:numNodes)',sigmaNod(:,1),sigmaNod(:,2),sigmaNod(:,3),sigmaNod(:,4),...
+                  'VariableNames',{'Node','Sigma-X','Sigma-Y','Tau-XY','Sigma-VM'});
+%Write table to an Excel file                      
+%writetable(stressTable,excelFileStress);                            
+stressTable

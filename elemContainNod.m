@@ -5,7 +5,7 @@ if (nNodEl==3)
     nElem1 = find(elem(:,1)==i);
     nElem2 = find(elem(:,2)==i);
     nElem3 = find(elem(:,3)==i);
-    elements=[nElem1',nElem2',nElem3']
+    elements=[nElem1',nElem2',nElem3'];
 elseif (nNodEl==4)
     nElem1 = find(elem(:,1)==i);
     nElem2 = find(elem(:,2)==i);
