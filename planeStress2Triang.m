@@ -120,8 +120,8 @@ vonMises = sqrt(sigma(1,:).^2 + sigma(2,:).^2 ...
 % =========================================================================
 % Fancy output: don't try this at the exams!
 % =========================================================================
-fprintf('\n%28s\n','Stress (in N/mm^2)');
-fprintf('%5s%8s%14s%14s%17s\n','ELEM.','SX','SY','SXY','Von Mises')
+fprintf('\n%28s\n','Stress at elements (in N/mm^2)');
+fprintf('%5s%8s%14s%14s%17s\n','ELEM.','SX','SY','tXY','Von Mises')
 fprintf('%2d%15.5e%14.5e%14.5e%14.5e\n',[(1:numElem)',sigma',vonMises']')
 
 %Stress and VM stress for the nodes (taken form the original
@@ -140,10 +140,10 @@ for i=1:numNodes
 end
 sigmaNod=sigmaNod./nodInElem;
 
-% Table with the stress tensor components at each point
-sigmaNod=sigmaNod';
-stressTable=table((1:numNodes)',sigmaNod(:,1),sigmaNod(:,2),sigmaNod(:,3),sigmaNod(:,4),...
-                  'VariableNames',{'Node','Sigma-X','Sigma-Y','Tau-XY','Sigma-VM'});
-%Write table to an Excel file                      
-%writetable(stressTable,excelFileStress);                            
-stressTable
+% =========================================================================
+% Fancy output: don't try this at the exams!
+% =========================================================================
+fprintf('\n%28s\n','Stress at nodes (in N/mm^2)');
+fprintf('%5s%10s%14s%14s%15s\n','NOD.','sigma-X','sigma-Y','tau-XY','sigma-VM')
+fprintf('%2d%15.5e%14.5e%14.5e%14.5e\n',[(1:numNodes)',sigmaNod]')
+
