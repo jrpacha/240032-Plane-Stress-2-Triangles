@@ -104,7 +104,7 @@ fprintf('%2d%16.5e%14.5e\n',[(1:numNodes)',u(1:2:end),u(2:2:end)]')
 scale=1.0e2;
 plotPlaneNodElemDespl(nodes, elem, u, scale);
 
-%Stress for the elements
+%sigma-X, sigma-Y, tau-XY at nodes
 sigma = zeros(3,numElem); 
 
 for e = 1:numElem
@@ -112,38 +112,46 @@ for e = 1:numElem
         dim*elem(e,3)-1, dim*elem(e,3)];
     sigma(:,e) = C*B{e}*u(rows);
 end
+sigma = sigma';
 
-%Von Mises stress 
-vonMises = sqrt(sigma(1,:).^2 + sigma(2,:).^2 ...
-    - sigma(1,:).*sigma(2,:)+ 3*sigma(3,:).^2);
+%Sigma-VM at the nodes
+vonMises = sqrt(sigma(:,1).^2 + sigma(:,2).^2 ...
+    - sigma(:,1).*sigma(:,2)+ 3*sigma(:,3).^2);
 
 % =========================================================================
 % Fancy output: don't try this at the exams!
 % =========================================================================
 fprintf('\n%28s\n','Stress at elements (in N/mm^2)');
-fprintf('%5s%8s%14s%14s%17s\n','ELEM.','SX','SY','tXY','Von Mises')
-fprintf('%2d%15.5e%14.5e%14.5e%14.5e\n',[(1:numElem)',sigma',vonMises']')
+fprintf('%5s%10s%14s%14s%15s\n','NOD.','sigma-X','sigma-Y','tau-XY','sigma-VM')
+fprintf('%2d%15.5e%14.5e%14.5e%14.5e\n',[(1:numElem)',sigma, vonMises]')
 
-%Stress and VM stress for the nodes (taken form the original
-%code in computeQuadStrainStressVM.m,available at professor 
-%Toni Susin's Numerical Factory)
-sigma = sigma';
-sigmaNod=zeros(4, numNodes);
+%Stress and VM stress for the nodes (taken form the original code in
+%computeQuadStrainStressVM.m,available at professor Toni Susin's Numerical 
+%Factory)
+
+%sigma-X, sigma-Y, tau-XY at nodes
+sigmaNod = zeros(numNodes,3);
+
 for e=1:numElem
-    sigmaNod(:,elem(e,:)) = sigmaNod(:, elem(e,:)) + [sigma(e,:)'; vonMises(e)];
+    sigmaNod(elem(e,:),:) = sigmaNod(elem(e,:),:) + sigma(e,:);
 end
 
-nodInElem=zeros(1,numNodes);
+nodInElem=zeros(numNodes,1);
 for i=1:numNodes
     elements=elemContainNod(i,elem);
     nodInElem(i)=size(elements,2); %how many elements the node ith belongs
 end
+
 sigmaNod=sigmaNod./nodInElem;
+
+%Sigma-VM at nodes 
+vonMisesNod = sqrt(sigmaNod(:,1).^2 + sigmaNod(:,2).^2 ...
+    - sigmaNod(:,1).*sigmaNod(:,2)+ 3*sigmaNod(:,3).^2);
 
 % =========================================================================
 % Fancy output: don't try this at the exams!
 % =========================================================================
 fprintf('\n%28s\n','Stress at nodes (in N/mm^2)');
 fprintf('%5s%10s%14s%14s%15s\n','NOD.','sigma-X','sigma-Y','tau-XY','sigma-VM')
-fprintf('%2d%15.5e%14.5e%14.5e%14.5e\n',[(1:numNodes)',sigmaNod]')
+fprintf('%2d%15.5e%14.5e%14.5e%14.5e\n',[(1:numNodes)', sigmaNod, vonMisesNod]')
 
