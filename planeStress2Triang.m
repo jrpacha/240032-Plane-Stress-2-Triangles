@@ -36,7 +36,7 @@ C(2,2)= C(1,1);
 C(3,3)= 0.5*E/(1+nu);
 
 for e=1:numElem
-    [Ke,Be] = planeElasrTriangStiffMatrixJR(nodes,elem,C,th,e);
+    [Ke,Be] = planeElastTriangStiffMatrixJR(nodes,elem,C,th,e);
     rows = [dim*elem(e,1)-1, dim*elem(e,1), ...
         dim*elem(e,2)-1, dim*elem(e,2), ...
         dim*elem(e,3)-1, dim*elem(e,3)];
